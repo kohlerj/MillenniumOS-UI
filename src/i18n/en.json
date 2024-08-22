@@ -1,0 +1,41 @@
+{
+  "language": "English",
+  "menuCaption": "MillenniumOS",
+  "probeTypes": {
+    "boss": {
+      "menuName": "Boss",
+      "fullName": "Boss Probe",
+      "description": "Probe a circular positive feature."
+    },
+    "bore": {
+      "menuName": "Bore",
+      "fullName": "Bore Probe",
+      "description": "Probe a circular negative feature."
+    },
+    "rectanglePocket": {
+      "menuName": "Rectangle Pocket",
+      "fullName": "Rectangle Pocket Probe",
+      "description": "Probe a rectangular negative feature."
+    },
+    "rectangleBlock": {
+      "menuName": "Rectangle Block",
+      "fullName": "Rectangle Block Probe",
+      "description": "Probe a rectangular positive feature."
+    },
+    "outsideCorner": {
+      "menuName": "Outside Corner",
+      "fullName": "Outside Corner Probe",
+      "description": "Probe an outside corner of a positive feature."
+    },
+    "viseCorner": {
+      "menuName": "Vise Corner",
+      "fullName": "Vise Corner Probe",
+      "description": "Probe the top and sides of an outside corner of a positive feature."
+    },
+    "singleSurface": {
+      "menuName": "Single Surface",
+      "fullName": "Single Surface Probe",
+      "description": "Probe a single surface of a feature."
+    }
+  }
+}
