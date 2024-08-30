@@ -1,46 +1,60 @@
 <template>
     <v-card>
         <v-card-title class="pt-0">
-            <v-icon small class="mr-1">mdi-swap-horizontal</v-icon>
+            <v-icon small class="mr-1">mdi-ruler-square</v-icon>
             Probing
             <v-spacer />
-            <v-select v-model="currentWorkplace" :items="workCoordinates" class="wcs-selection"
-                      hint="Work Coordinate System" @change="updateWorkplaceCoordinate" persistent-hint />
+            <code-btn small :color="allAxesHomed ? 'primary' : 'warning'" code="G28"
+                    :title="$t('button.home.titleAll')">
+                {{ $t("button.home.captionAll") }}
+            </code-btn>
         </v-card-title>
         <v-card-text>
             <v-container fluid>
-                <v-row>
-                    <v-col cols="12" md="3">
-                        <v-navigation-drawer permanent width="100%">
-                            <v-list-item
-                                v-for="probe in probeTypesForMenu"
-                                :key="probe.type"
-                                link
-                                @click="selectedProbe = probe.type"
-                                :input-value="selectedProbe === probe.type"
+                <v-row dense>
+                    <v-col cols="12">
+                        <v-stepper vertical v-model="step">
+                            <v-stepper-step
+                                step="1"
+                                :complete="step > 1"
+                                editable
+                            >Select Probe Cycle Type</v-stepper-step>
+
+                            <v-stepper-content
+                                step="1">
+                                <mos-probe-selector-panel :probeTypes="probeTypes"
+                                @update:selectedProbeType="probeTypeSelected" />
+                            </v-stepper-content>
+
+                            <v-stepper-step
+                                step="2"
+                                editable
                             >
-                                <v-list-item-icon>
-                                    <v-icon>{{ probe.icon }}</v-icon>
-                                </v-list-item-icon>
-                                <v-list-item-content>
-                                    <v-list-item-title>{{ probe.name }}</v-list-item-title>
-                                    <v-list-item-subtitle>{{ probe.desc }}</v-list-item-subtitle>
-                                </v-list-item-content>
-                            </v-list-item>
-                        </v-navigation-drawer>
-                    </v-col>
-                    <v-col cols="12" md="9">
-                        <v-row dense>
-                            <v-col cols="12">
-                                <mos-bore-probe-panel v-if="selectedProbe === 'bore'" />
-                                <mos-boss-probe-panel v-if="selectedProbe === 'boss'" />
-                                <mos-rectangle-pocket-probe-panel v-if="selectedProbe === 'rectanglePocket'" />
-                                <mos-rectangle-block-probe-panel v-if="selectedProbe === 'rectangleBlock'" />
-                                <mos-outside-corner-probe-panel v-if="selectedProbe === 'outsideCorner'" />
-                                <mos-vise-corner-probe-panel v-if="selectedProbe === 'viseCorner'" />
-                                <mos-single-surface-probe-panel v-if="selectedProbe === 'singleSurface'" />
-                            </v-col>
-                        </v-row>
+                                Configure Probe Settings
+                            </v-stepper-step>
+
+
+                            <v-stepper-content
+                                step="2">
+                                <mos-probe-settings-panel v-if="selectedProbeType !== -1" :probeType="probeTypes[selectedProbeType]" />
+                            </v-stepper-content>
+
+                            <v-stepper-step
+                                step="3"
+                                editable
+                            >
+                                Jog to Starting Position
+                            </v-stepper-step>
+
+                            <v-divider></v-divider>
+
+                            <v-stepper-step
+                                step="4"
+                                editable
+                            >Review</v-stepper-step>
+                            </v-stepper-header>
+                        </v-stepper>
+
                     </v-col>
                 </v-row>
             </v-container>
@@ -52,34 +66,32 @@
 import Vue from "vue";
 import store from "@/store";
 
+import probeTypes from '../types/Probe';
+
+
 export default Vue.extend({
     data() {
         return {
             currentWorkplace: 0,
-            selectedProbe: 'bore', // Default selected probe
-            probeTypes: [
-                { type: 'bore', icon: 'mdi-circle-outline' },
-                { type: 'boss', icon: 'mdi-circle' },
-                { type: 'rectanglePocket', icon: 'mdi-rectangle-outline' },
-                { type: 'rectangleBlock', icon: 'mdi-rectangle' },
-                { type: 'outsideCorner', icon: 'mdi-shape-square-plus' },
-                { type: 'viseCorner', icon: 'mdi-cube' },
-                { type: 'singleSurface', icon: 'mdi-square-opacity' }
-            ]
+            probeTypes: probeTypes,
+            selectedProbeType: -1,
+            step: 1,
         };
     },
     computed: {
+		allAxesHomed(): boolean { return store.state.machine.model.move.axes.every(axis => axis.visible && axis.homed)},
         workCoordinates(): Array<number> { return [...Array(9).keys()].map(i => i + 1); },
         workplaceNumber(): number { return store.state.machine.model.move.workplaceNumber; },
-        probeTypesForMenu() {
-            return this.probeTypes.map(probe => ({
-                ...probe,
-                name: this.$t(`plugins.millenniumOS.probeTypes.${probe.type}.menuName`),
-                desc: this.$t(`plugins.millenniumOS.probeTypes.${probe.type}.description`)
-            }));
-        }
     },
     methods: {
+        probeTypeSelected(probeType: number) {
+            console.log("Probe Type Updated: " + probeType);
+            this.selectedProbeType = probeType;
+            this.nextStep();
+        },
+        nextStep() {
+            this.step++;
+        },
         async updateWorkplaceCoordinate() {
             let code;
             if (this.currentWorkplace < 7) {
@@ -102,6 +114,7 @@ export default Vue.extend({
         }
     },
 });
+
 </script>
 
 <style scoped>

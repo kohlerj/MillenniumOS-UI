@@ -1,0 +1,43 @@
+import store from "@/store";
+
+export class ProbingError extends Error {
+    constructor(message?: string) {
+        super(message);
+    }
+}
+
+export interface IProbingMethod {
+    code: number;
+    arguments: Map<string, string>;
+    setArgument(param: string, value: number | string): void;
+    execute(): Promise<boolean | ProbingError>;
+}
+
+export class ProbingMethod implements IProbingMethod {
+    code: number;
+    arguments: Map<string, string>;
+    constructor() {
+        this.arguments = new Map([
+            "W"
+        ]);
+    }
+    setArgument(param: string, value: number | string): void {
+        this.arguments.set(param, value.toString());
+    }
+    async execute(): Promise<boolean | ProbingError> {
+        return await store.dispatch("machine/sendCode", {
+            code: this.code,
+            log: false,
+            noWait: true
+        });
+    }
+
+};
+
+
+export class BoreProbe extends ProbingMethod {
+    code = 6500.1;
+    arguments: Map<string, string> = new Map(
+
+    );
+}
