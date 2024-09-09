@@ -94,6 +94,7 @@ export type ProbeType = {
     name: string;
     icon: string;
     description: string;
+    code: number;
     settings: ProbeSettings;
 }
 
@@ -106,6 +107,7 @@ export default {
         name: 'Bore',
         icon: 'mdi-circle-outline',
         description: 'Finds the center of a circular bore (negative feature) by probing its inner diameter.',
+        code: 6500.1,
         settings: {
             'diameter': {
                 type: 'number',
@@ -136,6 +138,7 @@ export default {
         name: 'Boss',
         icon: 'mdi-circle',
         description: 'Finds the center of a circular boss (positive feature or workpiece) by probing its outer diameter.',
+        code: 6501.1,
         settings: {
             'diameter': {
                 type: 'number',
@@ -167,6 +170,7 @@ export default {
         name: 'Rectangle Pocket',
         icon: 'mdi-rectangle-outline',
         description: 'Finds the center of a rectangular pocket (negative feature) by probing its inner surfaces.',
+        code: 6502.1,
         settings: {
             'width': {
                 type: 'number',
@@ -209,6 +213,7 @@ export default {
         name: 'Rectangle Block',
         icon: 'mdi-rectangle',
         description: 'Finds the center of a rectangular block (positive feature or workpiece) by probing its outer surfaces.',
+        code: 6503.1,
         settings: {
             'width': {
                 type: 'number',
@@ -251,6 +256,7 @@ export default {
         name: 'Outside Corner',
         icon: 'mdi-square-rounded-badge',
         description: 'Finds the corner of a positive feature or workpiece by probing its outer surfaces.',
+        code: 6508.1,
         settings: {
             'quick': {
                 type: 'boolean',
@@ -312,6 +318,7 @@ export default {
         name: 'Vise Corner',
         icon: 'mdi-cube',
         description: 'Finds the top and corner of a positive feature or workpiece by probing its top and outer surfaces.',
+        code: 6520.1,
         settings: {
             'quick': {
                 type: 'boolean',
@@ -373,6 +380,7 @@ export default {
         name: 'Single Surface',
         icon: 'mdi-square-opacity',
         description: 'Finds the co-ordinate of a surface at one point.',
+        code: 6510.1,
         settings: {
             'surface': {
                 type: 'enum',
