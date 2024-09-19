@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        <v-card-title class="pt-0">
+        <v-card-title>
             <v-icon small class="mr-1">mdi-ruler-square</v-icon>
             Probing
             <v-spacer />
@@ -9,11 +9,13 @@
                 {{ $t("button.home.captionAll") }}
             </code-btn>
         </v-card-title>
-        <v-card-text>
+    {{  probeSettings }}
+        <v-card-text :class="{'px-0': $vuetify.breakpoint.mdAndDown}">
+            {{ selectedProbeType }}
             <v-container fluid>
-                <v-row dense>
+                <v-row>
                     <v-col cols="12">
-                        <v-stepper vertical v-model="step">
+                        <v-stepper vertical v-model="step" :class="{'smallScreen': $vuetify.breakpoint.mdAndDown}">
                             <v-stepper-step
                                 step="1"
                                 :complete="step > 1"
@@ -23,12 +25,12 @@
                             <v-stepper-content
                                 step="1">
                                 <mos-probe-selector-panel :probeTypes="probeTypes"
-                                @update:selectedProbeType="probeTypeSelected" />
+                                    v-model="selectedProbeType"
+                                />
                             </v-stepper-content>
 
                             <v-stepper-step
                                 step="2"
-                                editable
                             >
                                 Configure Probe Settings
                             </v-stepper-step>
@@ -36,7 +38,11 @@
 
                             <v-stepper-content
                                 step="2">
-                                <mos-probe-settings-panel v-if="selectedProbeType !== -1" :probeType="probeTypes[selectedProbeType]" />
+                                <mos-probe-settings-panel
+                                    v-if="selectedProbeType !== -1"
+                                    :probeType="probeTypes[selectedProbeType]"
+                                    v-model="probeSettings"
+                                />
                             </v-stepper-content>
 
                             <v-stepper-step
@@ -66,7 +72,7 @@
 import Vue from "vue";
 import store from "@/store";
 
-import probeTypes from '../types/Probe';
+import probeTypes from '../../types/Probe';
 
 
 export default Vue.extend({
@@ -75,6 +81,7 @@ export default Vue.extend({
             currentWorkplace: 0,
             probeTypes: probeTypes,
             selectedProbeType: -1,
+            probeSettings: {},
             step: 1,
         };
     },
@@ -109,6 +116,14 @@ export default Vue.extend({
         this.currentWorkplace = this.workplaceNumber + 1;
     },
     watch: {
+        selectedProbeType(to: number) {
+            if (to !== -1) {
+                this.nextStep();
+            }
+        },
+        probeSettings(to: any) {
+            this.nextStep();
+        },
         workplaceNumber(to: number) {
             this.currentWorkplace = to + 1;
         }
@@ -116,9 +131,15 @@ export default Vue.extend({
 });
 
 </script>
-
 <style scoped>
-.wcs-selection {
-    max-width: 200px;
+.smallScreen .v-stepper--vertical .v-stepper__step {
+    padding: 8px 8px 8px;
+}
+.v-application--is-ltr .v-stepper--vertical .v-stepper__content {
+	margin: -4px -36px -16px 20px;
+}
+.smallScreen .v-stepper__wrapper > div.container {
+    padding-left: 0;
+    padding-right: 0;
 }
 </style>

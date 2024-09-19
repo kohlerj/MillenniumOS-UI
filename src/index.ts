@@ -3,7 +3,8 @@
 import { registerRoute } from "@/routes";
 import { registerPluginLocalization } from "@/i18n";
 
-import './panels';
+import './components/panels';
+import './components/inputs';
 
 import Dash from './MillenniumOS.vue'
 

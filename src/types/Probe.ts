@@ -1,11 +1,13 @@
 const DS_OVERTRAVEL = 'overtravel';
-const DS_CLEARANCE = 'clearance';
+const DS_SURFACE_CLEARANCE = 'surface-clearance';
+const DS_CORNER_CLEARANCE = 'corner-clearance';
 
 export const valueSettings = {
     [DS_OVERTRAVEL]: {
         type: 'number',
         label: 'Overtravel',
         description: 'The distance the probe will travel past the expected edge of the workpiece, to account for inaccuracies in the starting position or feature dimensions.',
+        parameter: 'O',
         icon: 'mdi-unfold-less-vertical',
         value: 2,
         min: 1,
@@ -13,13 +15,26 @@ export const valueSettings = {
         step: 0.1,
         unit: 'mm'
     },
-    [DS_CLEARANCE]: {
+    [DS_SURFACE_CLEARANCE]: {
         type: 'number',
-        label: 'Clearance',
-        description: 'The distance the probe will travel past the expected edge of the workpiece, to account for inaccuracies in the starting position or feature dimensions.',
+        label: 'Surface Clearance',
+        description: 'The distance the probe will move inwards towards the expected surface of the workpiece, to account for inaccuracies in the starting position or work holding.',
+        parameter: 'T',
         icon: 'mdi-unfold-more-vertical',
         value: 10,
         min: 2,
+        max: 50,
+        step: 0.1,
+        unit: 'mm'
+    },
+    [DS_CORNER_CLEARANCE]: {
+        type: 'number',
+        label: 'Corner Clearance',
+        description: 'The distance the probe will move inwards from the expected corner of the workpiece, to account for inaccuracies in the starting position or corner radiuses.',
+        parameter: 'C',
+        icon: 'mdi-unfold-more-horizontal',
+        value: 5,
+        min: 1,
         max: 50,
         step: 0.1,
         unit: 'mm'
@@ -47,6 +62,7 @@ export type ProbeSetting = {
     type: string;
     label: string;
     description: string;
+    parameter?: string;
     icon?: string;
     min?: number;
     max?: number;
@@ -108,11 +124,13 @@ export default {
         icon: 'mdi-circle-outline',
         description: 'Finds the center of a circular bore (negative feature) by probing its inner diameter.',
         code: 6500.1,
+        // G6500.1 W{var.workOffset} H{var.boreDiameter} O{var.overTravel} J{global.mosMI[0]} K{global.mosMI[1]} L{global.mosMI[2] - var.probingDepth}
         settings: {
             'diameter': {
                 type: 'number',
                 label: 'Diameter',
                 description: 'The approximate diameter of the bore.',
+                parameter: 'H',
                 icon: 'mdi-diameter-variant',
                 value: 10,
                 min: 1,
@@ -124,6 +142,7 @@ export default {
                 type: 'number',
                 label: 'Depth (from starting position)',
                 description: 'How far to move down from the starting position before probing.',
+                parameter: 'Z',
                 icon: 'mdi-arrow-down-bold-circle',
                 value: 0,
                 min: 0,
@@ -144,6 +163,7 @@ export default {
                 type: 'number',
                 label: 'Diameter',
                 description: 'The approximate diameter of the boss.',
+                parameter: 'H',
                 icon: 'mdi-diameter-variant',
                 value: 10,
                 min: 1,
@@ -155,6 +175,7 @@ export default {
                 type: 'number',
                 label: 'Depth (from starting position)',
                 description: 'How far to move down from the starting position before probing.',
+                parameter: 'Z',
                 icon: 'mdi-arrow-down-bold-circle',
                 value: 0,
                 min: 0,
@@ -162,7 +183,7 @@ export default {
                 step: 0.1,
                 unit: 'mm'
             },
-            [DS_CLEARANCE]: valueSettings[DS_CLEARANCE],
+            [DS_SURFACE_CLEARANCE]: valueSettings[DS_SURFACE_CLEARANCE],
             [DS_OVERTRAVEL]: valueSettings[DS_OVERTRAVEL]
         },
     },
@@ -171,11 +192,13 @@ export default {
         icon: 'mdi-rectangle-outline',
         description: 'Finds the center of a rectangular pocket (negative feature) by probing its inner surfaces.',
         code: 6502.1,
+        // G6502.1 W{var.workOffset} H{var.pocketWidth} I{var.pocketLength} T{var.surfaceClearance} C{var.cornerClearance} O{var.overtravel} J{global.mosMI[0]} K{global.mosMI[1]} L{global.mosMI[2] - var.probingDepth}
         settings: {
             'width': {
                 type: 'number',
                 label: 'Width (on X axis)',
                 description: 'The approximate width of the pocket (measured parallel to the X axis).',
+                parameter: 'H',
                 icon: 'mdi-unfold-more-vertical',
                 value: 10,
                 min: 0,
@@ -187,6 +210,7 @@ export default {
                 type: 'number',
                 label: 'Length (on Y axis)',
                 description: 'The approximate length of the pocket (measured parallel to the Y axis).',
+                parameter: 'I',
                 icon: 'mdi-unfold-more-horizontal',
                 value: 10,
                 min: 0,
@@ -198,6 +222,7 @@ export default {
                 type: 'number',
                 label: 'Depth (from starting position)',
                 description: 'How far to move down from the starting position before probing.',
+                parameter: 'Z',
                 icon: 'mdi-arrow-down-bold-circle',
                 value: 0,
                 min: 0,
@@ -205,7 +230,8 @@ export default {
                 step: 0.1,
                 unit: 'mm'
             },
-            [DS_CLEARANCE]: valueSettings[DS_CLEARANCE],
+            [DS_SURFACE_CLEARANCE]: valueSettings[DS_SURFACE_CLEARANCE],
+            [DS_CORNER_CLEARANCE]: valueSettings[DS_CORNER_CLEARANCE],
             [DS_OVERTRAVEL]: valueSettings[DS_OVERTRAVEL]
         },
     },
@@ -219,6 +245,7 @@ export default {
                 type: 'number',
                 label: 'Width (on X axis)',
                 description: 'The approximate width of the block (measured parallel to the X axis).',
+                parameter: 'H',
                 icon: 'mdi-unfold-more-vertical',
                 value: 10,
                 min: 0,
@@ -230,6 +257,7 @@ export default {
                 type: 'number',
                 label: 'Length (on Y axis)',
                 description: 'The approximate length of the block (measured parallel to the Y axis).',
+                parameter: 'I',
                 icon: 'mdi-unfold-more-horizontal',
                 value: 10,
                 min: 0,
@@ -241,6 +269,7 @@ export default {
                 type: 'number',
                 label: 'Depth (from starting position)',
                 description: 'How far to move down from the starting position before probing.',
+                parameter: 'Z',
                 icon: 'mdi-arrow-down-bold-circle',
                 value: 5,
                 min: 0,
@@ -248,7 +277,8 @@ export default {
                 step: 0.1,
                 unit: 'mm'
             },
-            [DS_CLEARANCE]: valueSettings[DS_CLEARANCE],
+            [DS_SURFACE_CLEARANCE]: valueSettings[DS_SURFACE_CLEARANCE],
+            [DS_CORNER_CLEARANCE]: valueSettings[DS_CORNER_CLEARANCE],
             [DS_OVERTRAVEL]: valueSettings[DS_OVERTRAVEL]
         },
     },
@@ -257,11 +287,13 @@ export default {
         icon: 'mdi-square-rounded-badge',
         description: 'Finds the corner of a positive feature or workpiece by probing its outer surfaces.',
         code: 6508.1,
+        // G6508.1 W{var.workOffset} Q{var.mode} H{var.xSL} I{var.ySL} N{var.cnr} T{var.SurfaceClearance} C{var.cornerClearance} O{var.overtravel} J{global.mosMI[0]} K{global.mosMI[1]} L{global.mosMI[2] - var.probingDepth}
         settings: {
             'quick': {
                 type: 'boolean',
                 label: 'Quick Mode',
                 description: 'If enabled, only a single probe point will be performed on the surfaces forming the corner. Rotation compensation will not be available.',
+                parameter: 'Q',
                 icon: 'mdi-clock-fast',
                 value: false
             },
@@ -269,6 +301,7 @@ export default {
                 type: 'enum',
                 label: 'Corner',
                 description: 'The corner of the workpiece.',
+                parameter: 'N',
                 icon: 'mdi-rounded-corner',
                 value: 0,
                 options: ['Front Left', 'Front Right', 'Back Right', 'Back Left'],
@@ -277,6 +310,7 @@ export default {
                 type: 'number',
                 label: 'Width',
                 description: 'The approximate length of the X surface of the corner.',
+                parameter: 'H',
                 icon: 'mdi-unfold-more-vertical',
                 value: 10,
                 min: 0,
@@ -290,6 +324,7 @@ export default {
                 type: 'number',
                 label: 'Length',
                 description: 'The approximate length of the Y surface of the corner.',
+                parameter: 'I',
                 icon: 'mdi-unfold-more-horizontal',
                 value: 10,
                 min: 0,
@@ -303,6 +338,7 @@ export default {
                 type: 'number',
                 label: 'Depth (from starting position)',
                 description: 'How far to move down from the starting position before probing.',
+                parameter: 'Z',
                 icon: 'mdi-arrow-down-bold-circle',
                 value: 0,
                 min: 0,
@@ -310,7 +346,8 @@ export default {
                 step: 0.1,
                 unit: 'mm'
             },
-            [DS_CLEARANCE]: valueSettings[DS_CLEARANCE],
+            [DS_SURFACE_CLEARANCE]: valueSettings[DS_SURFACE_CLEARANCE],
+            [DS_CORNER_CLEARANCE]: valueSettings[DS_CORNER_CLEARANCE],
             [DS_OVERTRAVEL]: valueSettings[DS_OVERTRAVEL]
         },
     },
@@ -372,7 +409,8 @@ export default {
                 step: 0.1,
                 unit: 'mm'
             },
-            [DS_CLEARANCE]: valueSettings[DS_CLEARANCE],
+            [DS_SURFACE_CLEARANCE]: valueSettings[DS_SURFACE_CLEARANCE],
+            [DS_CORNER_CLEARANCE]: valueSettings[DS_CORNER_CLEARANCE],
             [DS_OVERTRAVEL]: valueSettings[DS_OVERTRAVEL]
         },
     },

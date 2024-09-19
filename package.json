@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@vue/cli-service": "^5.0.8",
+    "archiver": "^7.0.1",
+    "vue": "^3.4.38",
+    "vue-cli-plugin-vuetify": "^2.5.8"
+  }
+}
