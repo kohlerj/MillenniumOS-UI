@@ -3,8 +3,10 @@
         dense
         v-model="coord"
         :disabled="uiFrozen"
+        color="warning"
         :loading="loading"
         @change="setCoordinate"
+        type="number"
         hide-details
     >
         <template v-slot:append>
@@ -40,7 +42,11 @@
         el.style.cssText += 'transition: visibility 0.3s linear, opacity 0.3s linear;'
     });
 
-    export default BaseComponent.extend({
+
+    import { defineComponent } from 'vue';
+
+    export default defineComponent({
+        extends: BaseComponent,
         props: {
             axis: {
                 type: Axis,

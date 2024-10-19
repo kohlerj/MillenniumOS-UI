@@ -67,12 +67,16 @@
 
 </template>
 <script lang="ts">
+    import BaseComponent from "../BaseComponent.vue";
     import { Axis, AxisLetter, KinematicsName, MoveCompensationType } from "@duet3d/objectmodel";
-    import Vue from "vue";
 
     import store from "@/store";
 
-    export default Vue.extend({
+    import { defineComponent } from 'vue';
+
+    export default defineComponent({
+        extends: BaseComponent,
+
         computed: {
             currentAxis(): string { return store.state.machine.model.move.axes[this.axis].letter; },
             currentAxisColor(): String { return this.axisColours[this.axis]; },

@@ -1,7 +1,7 @@
 <template>
     <v-card>
         <v-card-title>
-            <v-icon small class="mr-1">mdi-ruler-square</v-icon>
+            <v-icon large class="mr-1">mdi-target-variant</v-icon>
             Probing
             <v-spacer />
             <code-btn small :color="allAxesHomed ? 'primary' : 'warning'" code="G28"
@@ -9,13 +9,11 @@
                 {{ $t("button.home.captionAll") }}
             </code-btn>
         </v-card-title>
-    {{  probeSettings }}
         <v-card-text :class="{'px-0': $vuetify.breakpoint.mdAndDown}">
-            {{ selectedProbeType }}
             <v-container fluid>
                 <v-row>
                     <v-col cols="12">
-                        <v-stepper vertical v-model="step" :class="{'smallScreen': $vuetify.breakpoint.mdAndDown}">
+                        <v-stepper vertical v-model="step">
                             <v-stepper-step
                                 step="1"
                                 :complete="step > 1"
@@ -69,13 +67,17 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import BaseComponent from "../BaseComponent.vue";
 import store from "@/store";
 
 import probeTypes from '../../types/Probe';
 
 
-export default Vue.extend({
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+    extends: BaseComponent,
+
     data() {
         return {
             currentWorkplace: 0,
@@ -131,15 +133,3 @@ export default Vue.extend({
 });
 
 </script>
-<style scoped>
-.smallScreen .v-stepper--vertical .v-stepper__step {
-    padding: 8px 8px 8px;
-}
-.v-application--is-ltr .v-stepper--vertical .v-stepper__content {
-	margin: -4px -36px -16px 20px;
-}
-.smallScreen .v-stepper__wrapper > div.container {
-    padding-left: 0;
-    padding-right: 0;
-}
-</style>

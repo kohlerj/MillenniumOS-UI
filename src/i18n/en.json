@@ -37,5 +37,41 @@
       "fullName": "Single Surface Probe",
       "description": "Probe a single surface of a feature."
     }
+  },
+  "probeSettings": {
+    "booleanEnabled": "Enabled",
+    "booleanDisabled": "Disabled"
+  },
+  "panels": {
+    "axesPosition": {
+      "positionHeader": "Position",
+      "notHomed": "Axis {0} is not homed",
+      "homed": "Axis {0} is homed",
+      "atStop": "Axis {0} endstop is triggered"
+    },
+    "cncStatus": {
+      "touchProbe": "Probe",
+      "toolsetter": "Toolsetter",
+      "toolRadius": "Tool Radius",
+      "toolOffset": "Tool Offset",
+      "toolName": "Tool",
+      "probeNotTriggered": "Not Triggered / {0}",
+      "probeTriggered": "Triggered / {0}",
+      "probeDisabled": "Disabled",
+      "rotationCompensation": "Rotation Comp.",
+      "workplaceValid": "Workplace {0} has a non-zero origin set on all axes",
+      "workplacePartial": "Workplace {0} has a non-zero origin set on some axes",
+      "workplaceInvalid": "Workplace {0} has no origins set"
+    },
+    "workplaceOrigins": {
+      "cardTitle": "Workplace Origins",
+      "resetAction": "Reset workplace {0}",
+      "workplaceHeader": "Workplace",
+      "activeHeader": "Active",
+      "actionsHeader": ""
+    },
+    "jobCode": {
+      "cardTitle": "Job Code"
+    }
   }
 }

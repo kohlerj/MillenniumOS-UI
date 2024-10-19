@@ -17,11 +17,14 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import store from "@/store";
+import BaseComponent from "../BaseComponent.vue";
 
 // Steps should be loaded from the store.
-export default Vue.extend({
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+    extends: BaseComponent,
+
     data() {
         return {
             steps: [

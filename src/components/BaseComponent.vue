@@ -1,12 +1,12 @@
 
 <script lang="ts">
-    import Vue, { PropType } from "vue";
-
     import { Axis, AxisLetter, Tool } from "@duet3d/objectmodel";
+
+    import { defineComponent } from 'vue'
 
     import store from "@/store";
 
-    export default Vue.extend({
+    export default defineComponent({
         props: {},
         computed: {
 		    uiFrozen(): boolean { return store.getters["uiFrozen"]; },

@@ -54,7 +54,7 @@
                                                 label
                                                 large
                                             >
-                                                {{ setting.value ? $t("Enabled") : $t("Disabled") }}
+                                                {{ setting.value ? $t("probeSettings.booleanEnabled") : $t("probeSettings.booleanDisabled") }}
                                             </v-chip>
                                         </v-col>
                                     </v-row>
@@ -63,6 +63,7 @@
                                             <v-icon class="d-inline-block">{{ setting.icon }}</v-icon>
                                                 <v-chip
                                                     v-for="(option, i) in setting.options"
+                                                    :key="i"
                                                     :id="i"
                                                     :color="getEnumColor(i, setting.value)"
                                                     label
@@ -104,13 +105,15 @@
 
 </template>
 <script lang="ts">
-    import Vue, { PropType } from "vue";
+    import { PropType } from "vue";
 
     import BaseComponent from "../BaseComponent.vue";
 
     import { Axis, AxisLetter } from "@duet3d/objectmodel";
 
     import store from "@/store";
+
+    import { defineComponent } from 'vue'
 
     import {ProbeType, ProbeSettingAll, isBooleanSetting, isEnumSetting, isNumberSetting, ProbeSettingNumber} from "../../types/Probe";
 
@@ -119,7 +122,8 @@
     }
     const colors = ['pink','blue','teal','green','blue-grey','deep-orange','indigo', 'red','purple'];
 
-    export default BaseComponent.extend({
+    export default defineComponent({
+        extends: BaseComponent,
         props: {
             value: {
                 type: Object as PropType<Settings>,
@@ -187,6 +191,6 @@
                 this.$emit("input", settings);
 
             }
-        }
+        },
     });
 </script>

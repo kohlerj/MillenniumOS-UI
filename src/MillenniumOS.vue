@@ -28,24 +28,31 @@
             <v-col cols="12" class="pb-0">
                 <mos-probing-panel class="mb-2" />
             </v-col>
-            <!--
             <v-col cols="3" class="pb-0">
                 <mos-safe-movement-panel class="mb-2" />
-            </v-col>-->
+            </v-col>
         </v-row>
         <v-row>
-            <v-col cols="12" lg="6" class="pb-0">
+            <v-col cols="12" lg="12" class="pb-0">
                 <mos-workplace-origins-panel class="mb-2" />
             </v-col>
-            <v-col cols="12" lg="6" class="pb-0">
+            <!-- <v-col cols="12" lg="6" class="pb-0">
                 <mos-probe-results-panel class="mb-2" />
-            </v-col>
+            </v-col> -->
         </v-row>
 	</div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-
-export default Vue.extend({});
+export default {
+    data: () => ({
+        // nothing
+    }),
+    computed: {
+        // nothing
+    },
+    methods: {
+        // nothing
+    },
+};
 </script>

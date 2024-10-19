@@ -12,8 +12,6 @@
                         @click="!mustExpandProbeDetails && selectProbeType(k)"
                         >
                         <v-card-title>
-                            <v-icon large left>{{ probeType.icon }}</v-icon>
-                            {{ probeType.name }}
                         </v-card-title>
                         <template v-if="mustExpandProbeDetails">
                             <v-card-actions>
@@ -36,6 +34,8 @@
                             </v-expand-transition>
                         </template>
                         <v-card-text v-else>
+                            <v-icon large left>{{ probeType.icon }}</v-icon>
+                            {{ probeType.name }}
                             {{ probeType.description }}
                         </v-card-text>
                     </v-card>
@@ -45,18 +45,23 @@
         </v-container>
 </template>
 <script lang="ts">
-    import Vue from "vue";
+    import BaseComponent from "../BaseComponent.vue";
 
     import store from "@/store";
 
     interface Data {
+        selectedProbeId: number;
         expandedTypeDetails: number[];
     }
 
-    export default Vue.extend({
+    import { defineComponent } from 'vue';
+
+    export default defineComponent({
+        extends: BaseComponent,
+
         props: {
             value: {
-                type: String,
+                type: Number,
                 required: false
             },
             probeTypes: {
@@ -65,7 +70,7 @@
             },
         },
         computed: {
-            selectedProbeTypeId(): String { return this.value; },
+            selectedProbeTypeId(): Number { return this.selectedProbeId; },
 		    uiFrozen(): boolean { return store.getters["uiFrozen"]; },
 		    allAxesHomed(): boolean { return store.state.machine.model.move.axes.every(axis => axis.visible && axis.homed)},
             mustExpandProbeDetails(): boolean {
@@ -74,8 +79,12 @@
         },
         data(): Data {
             return {
+                selectedProbeId: -1,
                 expandedTypeDetails: [],
             }
+        },
+        mounted() {
+            this.selectedProbeId = -1;
         },
         methods: {
             toggleDetails(index: number): void {
@@ -89,6 +98,7 @@
                 return this.expandedTypeDetails.includes(index);
             },
             selectProbeType(index: number) {
+                this.selectedProbeId = index;
                 this.$emit('input', index);
             }
         }

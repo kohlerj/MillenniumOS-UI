@@ -10,7 +10,7 @@
 </style>
 <template>
     <v-card>
-        <v-card-title>Workplace Origins</v-card-title>
+        <v-card-title>{{ $t("plugins.millenniumos.panels.workplaceOrigins.cardTitle") }}</v-card-title>
         <v-container fluid>
             <v-row>
                 <v-col>
@@ -27,44 +27,40 @@
                         item-key="offset"
                         @click:row="selectWorkplace"
                     >
-
                         <template v-for="(axis, index) in visibleAxes" v-slot:[`item.${axis.letter}`]="{ item }">
                             <mos-axis-input
                                 :key="index"
                                 :axis="axis"
                                 :workplaceOffset="item.offset"
-                            >
-                            </mos-axis-input>
+                            />
                         </template>
                         <template v-slot:item.active="{ item }">
-                            <v-icon
-                                :color="item.offset == currentWorkplace ? 'success' : 'error'"
-                                :disabled="uiFrozen"
-                            >
-                                {{ item.offset == currentWorkplace ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline' }}
-                            </v-icon>
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn
+                                        icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        :disabled="uiFrozen"
+                                        :loading="item.switching"
+                                    >
+                                        <v-icon
+                                            :color="item.offset == currentWorkplace ? 'success' : 'error'"
+                                            :disabled="uiFrozen"
+                                            @click.stop="switchWorkplace(item)"
+                                        >
+                                            {{ item.offset == currentWorkplace ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline' }}
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Activate workplace {{ item.workplace }}</span>
+                            </v-tooltip>
                         </template>
 
                         <template v-slot:item.actions="{ item }">
                             <v-container fluid py-1 pl-0>
                                 <v-row>
-                                    <v-col cols="6" lg="6">
-                                        <v-tooltip top>
-                                            <template v-slot:activator="{ on, attrs }">
-                                                <v-btn
-                                                    icon
-                                                    v-bind="attrs"
-                                                    v-on="on"
-                                                    :disabled="uiFrozen || item.offset == currentWorkplace"
-                                                    :loading="item.switching"
-                                                >
-                                                    <v-icon small @click="switchWorkplace(item)">mdi-swap-horizontal</v-icon>
-                                                </v-btn>
-                                            </template>
-                                            <span>Activate workplace {{ item.workplace }}</span>
-                                        </v-tooltip>
-                                    </v-col>
-                                    <v-col cols="6" lg="6">
+                                    <v-col cols="12" lg="12">
                                         <v-tooltip top>
                                             <template v-slot:activator="{ on, attrs }">
                                                 <v-btn
@@ -77,7 +73,7 @@
                                                     <v-icon small @click="clearWorkplace(item)">mdi-cancel</v-icon>
                                                 </v-btn>
                                             </template>
-                                            <span>Reset workplace {{ item.workplace }}</span>
+                                            <span>{{ $t("plugins.millenniumos.panels.workplaceOrigins.resetAction", [item.workplace]) }}</span>
                                         </v-tooltip>
                                     </v-col>
                                 </v-row>
@@ -90,16 +86,16 @@
     </v-card>
 </template>
 <script lang="ts">
-    import Vue from "vue";
+    import BaseComponent from "../BaseComponent.vue";
     import { Axis } from "@duet3d/objectmodel";
 
     import store from "@/store";
+    import { workplaceAsGCode } from "../../utils/display";
 
-    const workplaceToGCode = function(workplace: number): string {
-        return 'G' + ((workplace < 6) ? 54 + workplace : 59 + ((workplace % 5) * 0.1)).toString();
-    }
+    import { defineComponent } from 'vue';
 
-    export default Vue.extend({
+    export default defineComponent({
+        extends: BaseComponent,
         props: {},
         computed: {
             currentWorkplace(): number { return store.state.machine.model.move.workplaceNumber; },
@@ -114,7 +110,7 @@
             items(): Array<any> {
                 const workplaces = store.state.machine.model.limits?.workplaces ?? 0;
                 return Array.from({ length: workplaces }, (_, w) => {
-                    const code = workplaceToGCode(w);
+                    const code = workplaceAsGCode(w);
                     const workplace: any = {
                         'workplace': `${w+1} (${code})`,
                         'code': code,
@@ -135,6 +131,10 @@
                     text: 'Workplace',
                     value: 'workplace',
                     align: 'start',
+                },{
+                    text: this.$t('plugins.millenniumos.panels.workplaceOrigins.activeHeader'),
+                    value: 'active',
+                    align: 'center',
                 }, ...store.state.machine.model.move.axes.map(axis => ({
                     text: axis.letter,
                     value: axis.letter,
@@ -147,11 +147,12 @@
             }
         },
         methods: {
+            // Selected workplace should be lighter than current
+            // Active workplace should be green
+            // Active and selected workplace should be darker than
+            // active workplace.
             workplaceItemClass(item: any) {
-                const color = 'green';
-                let accent = (item.offset == this.selectedWorkplace) ? 'lighten-1' : '';
-                accent = (item.offset == this.currentWorkplace) ? 'darken-2' : accent;
-                return `${color} ${accent}`;
+                return (item.offset == this.selectedWorkplace) ? 'primary' : '';
             },
             selectWorkplace(item: any) {
                 if(this.selectedWorkplace === item.offset) {

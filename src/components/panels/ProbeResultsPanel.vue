@@ -49,13 +49,20 @@
     </v-card>
 </template>
 <script lang="ts">
-    import Vue from "vue";
+    import BaseComponent from "../BaseComponent.vue";
     import { Axis } from "@duet3d/objectmodel";
 
-    import store from "@/store";
-    import { randomInt } from "mathjs";
+    function randomInt(min: number, max: number): number {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
-    export default Vue.extend({
+    import store from "@/store";
+
+    import { defineComponent } from 'vue';
+
+    export default defineComponent({
+        extends: BaseComponent,
+
         props: {},
         computed: {
             currentWorkplace(): number { return store.state.machine.model.move.workplaceNumber; },
