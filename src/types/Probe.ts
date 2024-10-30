@@ -58,6 +58,17 @@ export enum surfaceNames {
     "Top"
 }
 
+export type Option = {
+    icon: string;
+    label: string;
+}
+
+export type OptionOrString = string | Option;
+
+export function hasOptionIcon(option: OptionOrString): option is Option {
+    return (option as Option).icon !== undefined;
+}
+
 export type ProbeSetting = {
     type: string;
     label: string;
@@ -68,30 +79,70 @@ export type ProbeSetting = {
     max?: number;
     step?: number;
     unit?: string;
-    options?: Array<string>;
+    options?: OptionOrString[];
     condition?: string;
     conditionValue?: boolean;
 }
 
-export type ProbeSettingBoolean = {
+export type ProbeSettingBoolean = ProbeSetting & {
     type: 'boolean';
     value: boolean;
-} & ProbeSetting;
+};
 
-export type ProbeSettingNumber = {
+export type ProbeSettingNumber = ProbeSetting & {
     type: 'number';
     value: number;
-} & ProbeSetting;
+};
 
-export type ProbeSettingEnum = {
+export type ProbeSettingEnum = ProbeSetting & {
     type: 'enum';
     value: number;
-} & ProbeSetting;
+};
 
 export type ProbeSettingAll = ProbeSettingBoolean | ProbeSettingNumber | ProbeSettingEnum;
 
 export type ProbeSettings = {
     [key: string]: ProbeSettingBoolean | ProbeSettingNumber | ProbeSettingEnum;
+}
+
+export interface IProbeCommand {
+    command: number;
+    settings: ProbeSettings,
+    addSetting: (id: string, setting: ProbeSettingAll) => void;
+    addSettings: (settings: ProbeSettings) => void;
+    getGCode: () => string;
+}
+
+export class ProbeCommand implements IProbeCommand {
+    command: number;
+    settings: ProbeSettings;
+
+    constructor(command: number) {
+        this.command = command;
+        this.settings = {};
+    }
+
+    addSetting(id: string, setting: ProbeSettingAll) {
+        this.settings[id] = setting;
+    }
+
+    addSettings(settings: ProbeSettings) {
+        this.settings = settings;
+    }
+
+    getGCode(): string {
+        const gcode: string[] = [this.command.toString()];
+        for (const key in this.settings) {
+            const setting = this.settings[key];
+
+            if (isBooleanSetting(setting)) {
+                gcode.push(`${setting.parameter}${setting.value ? 1 : 0}`);
+            } else if (isNumberSetting(setting) || isEnumSetting(setting)) {
+                gcode.push(`${setting.parameter}${setting.value}`);
+            }
+        }
+        return gcode.join(' ');
+    }
 }
 
 export function isBooleanSetting(setting: ProbeSetting): setting is ProbeSettingBoolean {
@@ -304,7 +355,24 @@ export default {
                 parameter: 'N',
                 icon: 'mdi-rounded-corner',
                 value: 0,
-                options: ['Front Left', 'Front Right', 'Back Right', 'Back Left'],
+                options: [
+                    {
+                        icon: 'mdi-arrow-bottom-left-bold-box',
+                        label: 'Front Left'
+                    },
+                    {
+                        icon: 'mdi-arrow-bottom-right-bold-box',
+                        label: 'Front Right'
+                    },
+                    {
+                        icon: 'mdi-arrow-top-right-bold-box',
+                        label: 'Back Right'
+                    },
+                    {
+                        icon: 'mdi-arrow-top-left-bold-box',
+                        label: 'Back Left'
+                    }
+                ]
             },
             'width': {
                 type: 'number',
@@ -361,6 +429,7 @@ export default {
                 type: 'boolean',
                 label: 'Quick Mode',
                 description: 'If enabled, only a single probe point will be performed on the surfaces forming the corner. Rotation compensation will not be available.',
+                parameter: 'Q',
                 icon: 'mdi-clock-fast',
                 value: false
             },
@@ -368,9 +437,27 @@ export default {
                 type: 'enum',
                 label: 'Corner',
                 description: 'The corner of the workpiece.',
+                parameter: 'N',
                 icon: 'mdi-rounded-corner',
                 value: 0,
-                options: ['Front Left', 'Front Right', 'Back Right', 'Back Left'],
+                options: [
+                    {
+                        icon: 'mdi-arrow-bottom-left-bold-box',
+                        label: 'Front Left'
+                    },
+                    {
+                        icon: 'mdi-arrow-bottom-right-bold-box',
+                        label: 'Front Right'
+                    },
+                    {
+                        icon: 'mdi-arrow-top-right-bold-box',
+                        label: 'Back Right'
+                    },
+                    {
+                        icon: 'mdi-arrow-top-left-bold-box',
+                        label: 'Back Left'
+                    }
+                ]
             },
             'width': {
                 type: 'number',
@@ -402,6 +489,7 @@ export default {
                 type: 'number',
                 label: 'Depth (from top surface)',
                 description: 'How far to move down from the top surface of the corner before probing the sides.',
+                parameter: 'P',
                 icon: 'mdi-arrow-down-bold-circle',
                 value: 2,
                 min: 0,
@@ -423,9 +511,32 @@ export default {
             'surface': {
                 type: 'enum',
                 label: 'Surface',
-                description: 'The surface towards..',
+                description: 'The surface s towards the..',
+                parameter: 'H',
+                icon: 'mdi-square-opacity',
                 value: 0,
-                options: ['Left', 'Right', 'Front', 'Back', 'Top'],
+                options: [
+                    {
+                        label: 'Left',
+                        icon: 'mdi-arrow-left-bold'
+                    },
+                    {
+                        label: 'Right',
+                        icon: 'mdi-arrow-right-bold'
+                    },
+                    {
+                        label: 'Front',
+                        icon: 'mdi-arrow-down-bold'
+                    },
+                    {
+                        label: 'Back',
+                        icon: 'mdi-arrow-up-bold'
+                    },
+                    {
+                        label: 'Top',
+                        icon: 'mdi-circle-box'
+                    }
+                ]
             },
             'distance': {
                 type: 'number',

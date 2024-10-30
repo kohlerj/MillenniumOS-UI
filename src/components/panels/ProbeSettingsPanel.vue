@@ -2,7 +2,7 @@
     <v-card>
         <v-card-title>
             <v-icon large left>{{ probeType.icon }}</v-icon>
-            {{ probeType.name }}
+            <h3>{{ probeType.name }}</h3>
         </v-card-title>
         <v-container fluid>
             <v-form ref="probeSettings">
@@ -31,8 +31,8 @@
                                         <v-col cols="4" md="2">
                                             <v-text-field
                                                 v-model="setting.value"
-                                                @input="setting.value = $event"
                                                 :suffix = "setting.unit"
+                                                @input="setting.value = $event"
                                             ></v-text-field>
                                         </v-col>
                                     </v-row>
@@ -49,43 +49,53 @@
                                             </v-switch>
                                         </v-col>
                                         <v-col cols="4" md="2">
-                                            <v-chip
-                                                :color="setting.value ? 'primary' : 'secondary'"
-                                                label
-                                                large
-                                            >
-                                                {{ setting.value ? $t("probeSettings.booleanEnabled") : $t("probeSettings.booleanDisabled") }}
-                                            </v-chip>
+                                            <v-tooltip top>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <v-chip
+                                                        :color="setting.value ? 'primary' : 'secondary'"
+                                                        label
+                                                        class="mt-6"
+                                                        v-on="on"
+                                                    >
+                                                        <v-icon
+                                                            v-on="on"
+                                                        >
+                                                            {{  setting.value ? 'mdi-check' : 'mdi-close' }}
+                                                        </v-icon>
+                                                    </v-chip>
+                                                </template>
+                                                {{ setting.value ? $t("plugins.millenniumos.probeSettings.booleanEnabled") : $t("plugins.millenniumos.probeSettings.booleanDisabled") }}
+                                            </v-tooltip>
                                         </v-col>
                                     </v-row>
                                     <v-row v-else-if="isEnumSetting(setting)">
-                                        <v-col cols="8" md="10">
-                                            <v-icon class="d-inline-block">{{ setting.icon }}</v-icon>
-                                                <v-chip
-                                                    v-for="(option, i) in setting.options"
-                                                    :key="i"
-                                                    :id="i"
-                                                    :color="getEnumColor(i, setting.value)"
-                                                    label
-                                                    large
-                                                    class="mx-2"
-                                                    filter
-                                                    :input-value="i+1"
-                                                    :filter-icon="setting.value == i ? 'mdi-check' : 'mdi-border-radius'"
-                                                    @click="setting.value = i"
-                                                >
-                                                    {{ option }}
-                                                </v-chip>
-                                        </v-col>
-                                        <v-col cols="4" md="2">
-                                            <v-chip
-                                                label
-                                                :color="getEnumColor(setting.value, -1)"
-                                                large
-                                                class="px-6"
+                                        <v-col cols="8" md="12">
+                                            <v-input
+                                                :prepend-icon="setting.icon"
                                             >
-                                                {{ (setting.options && setting.value in setting.options) ? setting.options[setting.value] : 'Unknown' }}
-                                            </v-chip>
+                                                <v-btn-toggle
+                                                        v-model="setting.value"
+                                                        mandatory
+                                                        class="ml-4"
+                                                        >
+                                                    <v-tooltip v-for="(option, i) in setting.options" top>
+                                                        <template v-slot:activator="{ on, attrs }">
+                                                            <v-btn
+                                                                v-on="on"
+                                                                :key="i"
+                                                                :value="i"
+                                                                :color="getEnumColor(i, setting.value)"
+                                                                :disabled="!allowInput(name)"
+                                                                small
+                                                                >
+                                                                <v-icon>{{ getEnumIcon(option) }}</v-icon>
+                                                                {{ getEnumText(option) }}
+                                                            </v-btn>
+                                                        </template>
+                                                        <span>{{ getEnumText(option) }}</span>
+                                                    </v-tooltip>
+                                                </v-btn-toggle>
+                                            </v-input>
                                         </v-col>
                                     </v-row>
                                 </v-col>
@@ -97,7 +107,7 @@
         </v-container>
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn @click="updateProbeSettings()">
+            <v-btn @click="updateProbeSettings()" color="primary">
                 Continue <v-icon>mdi-forward</v-icon>
             </v-btn>
         </v-card-actions>
@@ -115,19 +125,16 @@
 
     import { defineComponent } from 'vue'
 
-    import {ProbeType, ProbeSettingAll, isBooleanSetting, isEnumSetting, isNumberSetting, ProbeSettingNumber} from "../../types/Probe";
+    import { ProbeType, OptionOrString, hasOptionIcon, ProbeCommand, ProbeSettingAll, isBooleanSetting, isEnumSetting, isNumberSetting } from "../../types/Probe";
 
-    interface Settings {
-        [key: string]: number | boolean;
-    }
     const colors = ['pink','blue','teal','green','blue-grey','deep-orange','indigo', 'red','purple'];
 
     export default defineComponent({
         extends: BaseComponent,
         props: {
             value: {
-                type: Object as PropType<Settings>,
-                required: false
+                type: Object as PropType<ProbeCommand>,
+                required: true
             },
             probeType: {
                 type: Object as PropType<ProbeType>,
@@ -167,30 +174,25 @@
             isEnumSetting: isEnumSetting,
             getEnumColor(key: number, current: number): string {
                 // Darken the colour if the current value is the same as the key
-                return colors[key % colors.length] + (key === current ? ' darken-2' : '');
+                return colors[key % colors.length] + (key === current ? ' lighten-2' : '');
+            },
+            getEnumText(opt: OptionOrString): string {
+                if(hasOptionIcon(opt)) {
+                    return opt.label;
+                }
+                return opt;
+            },
+            getEnumIcon(opt: OptionOrString): string {
+                if(hasOptionIcon(opt)) {
+                    return opt.icon;
+                }
+                return 'mdi-border-radius';
             },
             updateProbeSettings() {
-                // Iterate over each setting in the probeType settings and extract
-                // the code and value to send.
-                const settings: Settings = {};
-
-                for (const key in this.probeType.settings) {
-                    const setting = this.probeType.settings[key] as ProbeSettingAll;
-                    // For number settings whose parameter matches an axis letter,
-                    // subtract the value from the current position.
-                    if(isNumberSetting(setting)) {
-                        if (setting.parameter && setting.value) {
-                            let value = setting.value;
-                            if(this.visibleAxesByLetter[setting.parameter as AxisLetter]) {
-                                value = this.absolutePosition[setting.parameter as AxisLetter] - value;
-                            }
-                            settings[setting.parameter] = value;
-                        }
-                    }
+                if(this.value !== null) {
+                    this.value.addSettings(this.probeType.settings);
                 }
-                this.$emit("input", settings);
-
-            }
-        },
+            },
+        }
     });
 </script>

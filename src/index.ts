@@ -2,8 +2,8 @@
 
 import { registerRoute } from "@/routes";
 import { registerPluginLocalization } from "@/i18n";
+import { registerPluginData, PluginDataType } from '@/store';
 
-// Import utils
 import './utils';
 
 import './components/panels';
@@ -26,3 +26,5 @@ registerRoute(Dash, {
 		}
 	}
 });
+
+registerPluginData('MillenniumOS', PluginDataType.machineSetting, 'protectedMoveProbeID', -1);

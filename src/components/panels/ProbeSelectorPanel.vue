@@ -6,12 +6,14 @@
 <template>
         <v-container fluid :class="!mustExpandProbeDetails ? 'probeTypeFull' : 'probeTypeCollapsed'">
             <v-row>
-                <v-col v-for="(probeType, k) in probeTypes" cols="12" lg="3" md="6" :key="k">
+                <v-col v-for="(probeType, k) in allProbeTypes" cols="12" lg="3" md="6" :key="k">
                     <v-card
                         :color="selectedProbeTypeId == k ? 'warning' : 'primary'"
                         @click="!mustExpandProbeDetails && selectProbeType(k)"
                         >
                         <v-card-title>
+                            <v-icon large left>{{ probeType.icon }}</v-icon>
+                            <h3>{{ probeType.name }}</h3>
                         </v-card-title>
                         <template v-if="mustExpandProbeDetails">
                             <v-card-actions>
@@ -34,8 +36,6 @@
                             </v-expand-transition>
                         </template>
                         <v-card-text v-else>
-                            <v-icon large left>{{ probeType.icon }}</v-icon>
-                            {{ probeType.name }}
                             {{ probeType.description }}
                         </v-card-text>
                     </v-card>
@@ -76,6 +76,9 @@
             mustExpandProbeDetails(): boolean {
                  return this.$vuetify.breakpoint.mdAndDown;
             },
+            allProbeTypes(): any {
+                return this.$props.probeTypes;
+            }
         },
         data(): Data {
             return {

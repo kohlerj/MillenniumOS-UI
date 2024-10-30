@@ -10,54 +10,58 @@
             </code-btn>
         </v-card-title>
         <v-card-text :class="{'px-0': $vuetify.breakpoint.mdAndDown}">
+            {{ probeSettings }}
             <v-container fluid>
                 <v-row>
                     <v-col cols="12">
-                        <v-stepper vertical v-model="step">
-                            <v-stepper-step
-                                step="1"
-                                :complete="step > 1"
-                                editable
-                            >Select Probe Cycle Type</v-stepper-step>
+                        <v-tabs v-model="tab">
+                            <v-tab>
+                                <v-icon left>mdi-target-variant</v-icon>
+                                Select Cycle
+                            </v-tab>
 
-                            <v-stepper-content
-                                step="1">
+                            <v-tab :disabled="!hasProbeTypeSelected">
+                                <v-icon left>mdi-cog</v-icon>
+                                Configure Settings
+                            </v-tab>
+                            <v-tab :disabled="!hasProbeTypeSelected">
+                                <v-icon left>mdi-run-fast</v-icon>
+                                Move to Position
+                            </v-tab>
+                            <v-tab :disabled="!hasProbeTypeSelected || !hasProbeSettings">
+                                <v-icon left>mdi-check</v-icon>
+                                Review and Run
+                            </v-tab>
+
+
+                            <v-tab-item>
                                 <mos-probe-selector-panel :probeTypes="probeTypes"
                                     v-model="selectedProbeType"
                                 />
-                            </v-stepper-content>
-
-                            <v-stepper-step
-                                step="2"
-                            >
-                                Configure Probe Settings
-                            </v-stepper-step>
+                            </v-tab-item>
 
 
-                            <v-stepper-content
-                                step="2">
+                            <v-tab-item>
                                 <mos-probe-settings-panel
-                                    v-if="selectedProbeType !== -1"
+                                    v-if="hasProbeTypeSelected"
                                     :probeType="probeTypes[selectedProbeType]"
                                     v-model="probeSettings"
                                 />
-                            </v-stepper-content>
+                            </v-tab-item>
 
-                            <v-stepper-step
-                                step="3"
-                                editable
-                            >
-                                Jog to Starting Position
-                            </v-stepper-step>
+                            <v-tab-item>
+                                <cnc-movement-panel />
+                            </v-tab-item>
 
-                            <v-divider></v-divider>
-
-                            <v-stepper-step
-                                step="4"
-                                editable
-                            >Review</v-stepper-step>
-                            </v-stepper-header>
-                        </v-stepper>
+                            <v-tab-item>
+                                <v-card>
+                                    <v-card-title>Review</v-card-title>
+                                    <v-card-text>
+                                        {{ probeSettings }}
+                                    </v-card-text>
+                                </v-card>
+                            </v-tab-item>
+                        </v-tabs>
 
                     </v-col>
                 </v-row>
@@ -70,7 +74,7 @@
 import BaseComponent from "../BaseComponent.vue";
 import store from "@/store";
 
-import probeTypes from '../../types/Probe';
+import { default as probeTypes, ProbeCommand } from '../../types/Probe';
 
 
 import { defineComponent } from 'vue';
@@ -83,23 +87,20 @@ export default defineComponent({
             currentWorkplace: 0,
             probeTypes: probeTypes,
             selectedProbeType: -1,
-            probeSettings: {},
-            step: 1,
+            probeSettings: null as ProbeCommand | null,
+            tab: 0,
         };
     },
     computed: {
 		allAxesHomed(): boolean { return store.state.machine.model.move.axes.every(axis => axis.visible && axis.homed)},
         workCoordinates(): Array<number> { return [...Array(9).keys()].map(i => i + 1); },
         workplaceNumber(): number { return store.state.machine.model.move.workplaceNumber; },
+        hasProbeTypeSelected(): boolean { return this.selectedProbeType !== -1; },
+        hasProbeSettings(): boolean { return this.probeSettings !== null; }
     },
     methods: {
-        probeTypeSelected(probeType: number) {
-            console.log("Probe Type Updated: " + probeType);
-            this.selectedProbeType = probeType;
-            this.nextStep();
-        },
         nextStep() {
-            this.step++;
+            this.tab++;
         },
         async updateWorkplaceCoordinate() {
             let code;
@@ -122,9 +123,6 @@ export default defineComponent({
             if (to !== -1) {
                 this.nextStep();
             }
-        },
-        probeSettings(to: any) {
-            this.nextStep();
         },
         workplaceNumber(to: number) {
             this.currentWorkplace = to + 1;
