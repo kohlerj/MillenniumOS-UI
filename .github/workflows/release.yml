@@ -3,7 +3,7 @@ on:
     tags:
       - 'v*'
 
-name: Build RRF Configs for Release
+name: Build MillenniumOS UI for Release
 jobs:
   build-and-release:
     name: Build and Create Release
