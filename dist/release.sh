@@ -4,7 +4,7 @@
 SD=$(dirname "$0")
 
 # Get absolute path of DWC directory
-MOS_UI_DIR="${SD}/../"
+MOS_UI_DIR=$(realpath "${SD}/../")
 
 cd "${DWC_DIR}"
 
