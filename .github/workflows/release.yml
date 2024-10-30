@@ -16,14 +16,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Duet3D/DuetWebControl
-          ref: 3.6.0-beta.1
+          ref: v3.6.0-beta.1
 
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           path: src/plugins/MillenniumOS
 
-      - name: Build MillenniuOS UI Release
+      - name: Build MillenniumOS UI Release
         run: |
           src/plugins/MillenniumOS/dist/release.sh
 
