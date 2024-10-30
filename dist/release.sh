@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
 
-# Get directory of this script
-SD=$(dirname "$0")
-
-# Get absolute path of DWC directory
-MOS_UI_DIR=$(realpath "${SD}/../")
-
-cd "${DWC_DIR}"
+[[ ! -f "package.json" ]] && echo "Please run this script from the root of Duet Web Control!" && exit 1
 
 npm install
-
-npm run build-plugin ${MOS_UI_DIR}
+npm run build-plugin MillenniumOS
