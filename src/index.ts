@@ -27,4 +27,4 @@ registerRoute(Dash, {
 	}
 });
 
-registerPluginData('MillenniumOS', PluginDataType.machineSetting, 'protectedMoveProbeID', -1);
+registerPluginData('MillenniumOS', PluginDataType.machineCache, 'protectedMoveProbeID', -1);

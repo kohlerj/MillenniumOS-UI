@@ -203,9 +203,13 @@
 import { Axis, AxisLetter, Probe } from "@duet3d/objectmodel";
 import Vue from "vue";
 
+import { MachineCache } from "../../../types/MachineCache"
+
 import { log, LogType } from "@/utils/logging";
 
 import store from "@/store";
+
+import { setPluginData, PluginDataType } from '@/store';
 
 import { ProbeType } from "@duet3d/objectmodel";
 
@@ -217,6 +221,7 @@ type ProtectedMoveProbe = {
 
 export default Vue.extend({
 	computed: {
+        pluginCache(): MachineCache { return store.state.machine.cache.plugins.MillenniumOS as MachineCache; },
 		uiFrozen(): boolean { return store.getters["uiFrozen"]; },
 		moveSteps(): (axisLetter: AxisLetter) => Array<number> { return ((axisLetter: AxisLetter) => store.getters["machine/settings/moveSteps"](axisLetter)); },
 		numMoveSteps(): number { return store.getters["machine/settings/numMoveSteps"]; },
@@ -225,10 +230,21 @@ export default Vue.extend({
 		workCoordinates(): Array<number> { return [...Array(9).keys()].map(i => i + 1); },
 		workplaceNumber(): number { return store.state.machine.model.move.workplaceNumber; },
 		protectedMoveProbeID: {
-			get(): number { return this.currentProtectedMoveProbeID },
-			set(value: number) { this.currentProtectedMoveProbeID = value }
+			get(): number {
+			    if(this.currentProtectedMoveProbeID === -1) {
+                    const cachedProbeID = this.pluginCache.protectedMoveProbeID;
+                    if(store.state.machine.model.sensors.probes[cachedProbeID] !== null) {
+                        this.currentProtectedMoveProbeID = cachedProbeID;
+                    }
+                }
+				return this.currentProtectedMoveProbeID
+			},
+			set(value: number) {
+              this.currentProtectedMoveProbeID = value;
+              setPluginData('MillenniumOS', PluginDataType.machineCache, 'protectedMoveProbeID', value);
+			}
 		},
-		isProtectedMovesEnabled(): boolean { return this.currentProtectedMoveProbeID >= 0; },
+		isProtectedMovesEnabled(): boolean { return this.protectedMoveProbeID >= 0; },
 		protectedMoveProbes: {
 			get(): Array<ProtectedMoveProbe> {
 				const probes: Array<ProtectedMoveProbe> = [];
