@@ -7,101 +7,99 @@
         <v-container fluid>
             <v-form ref="probeSettings">
                 <v-row>
-                    <template v-for="(setting, name, index) in probeType.settings">
-                        <v-col cols="12" md="6">
-                            <v-row>
-                                <v-col :id="index">
-                                    <v-subheader>{{ setting.label ?? 'Unknown' }}</v-subheader>
-                                    <v-row v-if="isNumberSetting(setting)">
-                                        <v-col cols="8" md="10">
-                                            <v-slider
-                                                v-model="setting.value"
-                                                :min="setting.min"
-                                                :max="setting.max"
-                                                :step="setting.step"
-                                                :hint="setting.description"
-                                                :prepend-icon="setting.icon"
-                                                :disabled="!allowInput(name)"
-                                                @input="setting.value = $event"
-                                                thumb-label
-                                                persistent-hint
-                                            >
-                                            </v-slider>
-                                        </v-col>
-                                        <v-col cols="4" md="2">
-                                            <v-text-field
-                                                v-model="setting.value"
-                                                :suffix = "setting.unit"
-                                                @input="setting.value = $event"
-                                            ></v-text-field>
-                                        </v-col>
-                                    </v-row>
-                                    <v-row v-else-if="isBooleanSetting(setting)">
-                                        <v-col cols="8" md="10">
-                                            <v-switch
-                                                v-model="setting.value"
-                                                @change="setting.value = $event"
-                                                :hint="setting.description"
-                                                :prepend-icon="setting.icon"
-                                                :disabled="!allowInput(name)"
-                                                persistent-hint
-                                            >
-                                            </v-switch>
-                                        </v-col>
-                                        <v-col cols="4" md="2">
-                                            <v-tooltip top>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <v-chip
-                                                        :color="setting.value ? 'primary' : 'secondary'"
-                                                        label
-                                                        class="mt-6"
+                    <v-col cols="12" md="6" v-for="(setting, name, index) in probeType.settings" :key="index">
+                        <v-row>
+                            <v-col :id="index">
+                                <v-subheader>{{ setting.label ?? 'Unknown' }}</v-subheader>
+                                <v-row v-if="isNumberSetting(setting)">
+                                    <v-col cols="8" md="10">
+                                        <v-slider
+                                            v-model="setting.value"
+                                            :min="setting.min"
+                                            :max="setting.max"
+                                            :step="setting.step"
+                                            :hint="setting.description"
+                                            :prepend-icon="setting.icon"
+                                            :disabled="!allowInput(name)"
+                                            @input="setting.value = $event"
+                                            thumb-label
+                                            persistent-hint
+                                        >
+                                        </v-slider>
+                                    </v-col>
+                                    <v-col cols="4" md="2">
+                                        <v-text-field
+                                            v-model="setting.value"
+                                            :suffix = "setting.unit"
+                                            @input="setting.value = $event"
+                                        ></v-text-field>
+                                    </v-col>
+                                </v-row>
+                                <v-row v-else-if="isBooleanSetting(setting)">
+                                    <v-col cols="8" md="10">
+                                        <v-switch
+                                            v-model="setting.value"
+                                            @change="setting.value = $event"
+                                            :hint="setting.description"
+                                            :prepend-icon="setting.icon"
+                                            :disabled="!allowInput(name)"
+                                            persistent-hint
+                                        >
+                                        </v-switch>
+                                    </v-col>
+                                    <v-col cols="4" md="2">
+                                        <v-tooltip top>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-chip
+                                                    :color="setting.value ? 'primary' : 'secondary'"
+                                                    label
+                                                    class="mt-6"
+                                                    v-on="on"
+                                                >
+                                                    <v-icon
                                                         v-on="on"
                                                     >
-                                                        <v-icon
+                                                        {{  setting.value ? 'mdi-check' : 'mdi-close' }}
+                                                    </v-icon>
+                                                </v-chip>
+                                            </template>
+                                            {{ setting.value ? $t("plugins.millenniumos.probeSettings.booleanEnabled") : $t("plugins.millenniumos.probeSettings.booleanDisabled") }}
+                                        </v-tooltip>
+                                    </v-col>
+                                </v-row>
+                                <v-row v-else-if="isEnumSetting(setting)">
+                                    <v-col cols="8" md="12">
+                                        <v-input
+                                            :prepend-icon="setting.icon"
+                                        >
+                                            <v-btn-toggle
+                                                    v-model="setting.value"
+                                                    mandatory
+                                                    class="ml-4"
+                                                    >
+                                                <v-tooltip v-for="(option, i) in setting.options" :key="index" top>
+                                                    <template v-slot:activator="{ on, attrs }">
+                                                        <v-btn
                                                             v-on="on"
-                                                        >
-                                                            {{  setting.value ? 'mdi-check' : 'mdi-close' }}
-                                                        </v-icon>
-                                                    </v-chip>
-                                                </template>
-                                                {{ setting.value ? $t("plugins.millenniumos.probeSettings.booleanEnabled") : $t("plugins.millenniumos.probeSettings.booleanDisabled") }}
-                                            </v-tooltip>
-                                        </v-col>
-                                    </v-row>
-                                    <v-row v-else-if="isEnumSetting(setting)">
-                                        <v-col cols="8" md="12">
-                                            <v-input
-                                                :prepend-icon="setting.icon"
-                                            >
-                                                <v-btn-toggle
-                                                        v-model="setting.value"
-                                                        mandatory
-                                                        class="ml-4"
-                                                        >
-                                                    <v-tooltip v-for="(option, i) in setting.options" top>
-                                                        <template v-slot:activator="{ on, attrs }">
-                                                            <v-btn
-                                                                v-on="on"
-                                                                :key="i"
-                                                                :value="i"
-                                                                :color="getEnumColor(i, setting.value)"
-                                                                :disabled="!allowInput(name)"
-                                                                small
-                                                                >
-                                                                <v-icon>{{ getEnumIcon(option) }}</v-icon>
-                                                                {{ getEnumText(option) }}
-                                                            </v-btn>
-                                                        </template>
-                                                        <span>{{ getEnumText(option) }}</span>
-                                                    </v-tooltip>
-                                                </v-btn-toggle>
-                                            </v-input>
-                                        </v-col>
-                                    </v-row>
-                                </v-col>
-                            </v-row>
-                        </v-col>
-                    </template>
+                                                            :key="i"
+                                                            :value="i"
+                                                            :color="getEnumColor(i, setting.value)"
+                                                            :disabled="!allowInput(name)"
+                                                            small
+                                                            >
+                                                            <v-icon>{{ getEnumIcon(option) }}</v-icon>
+                                                            {{ getEnumText(option) }}
+                                                        </v-btn>
+                                                    </template>
+                                                    <span>{{ getEnumText(option) }}</span>
+                                                </v-tooltip>
+                                            </v-btn-toggle>
+                                        </v-input>
+                                    </v-col>
+                                </v-row>
+                            </v-col>
+                        </v-row>
+                    </v-col>
                 </v-row>
             </v-form>
         </v-container>
