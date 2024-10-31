@@ -84,7 +84,6 @@ export default defineComponent({
 
     data() {
         return {
-            currentWorkplace: 0,
             probeTypes: probeTypes,
             selectedProbeType: -1,
             probeSettings: null as ProbeCommand | null,
