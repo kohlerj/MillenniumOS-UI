@@ -5,6 +5,7 @@ on:
 
 env:
   DWC_VERSION: ${{ inputs.dwc_version || 'v3.5.3' }}
+  VERSION: ${{ github.ref_name }}
 
 name: Build MillenniumOS UI for Release
 jobs:
@@ -26,11 +27,19 @@ jobs:
         with:
           path: src/plugins/MillenniumOS_UI
 
-      - name: Apply plugin version
+      - name: Strip v from version
+        id: strip-version
+        outputs:
+         short_version: ${{ steps.strip-version.outputs.SHORT_VERSION }}
         run: |
           VERSION=${{ github.ref_name }}
+          echo "Stripping v from version $VERSION"
+          echo "SHORT_VERSION=${VERSION#v}" >> $GITHUB_OUTPUT
+
+      - name: Apply plugin version
+        run: |
           echo "Applying version $VERSION to MillenniumOS UI"
-          sed -i "s/\"version\": \"0.0.0\"/\"version\": \"${VERSION#v}\"/" src/plugins/MillenniumOS_UI/plugin.json
+          sed -i "s/\"version\": \"0.0.0\"/\"version\": \"${{ steps.strip-version.outputs.short_version }}\"/" src/plugins/MillenniumOS_UI/plugin.json
           cat src/plugins/MillenniumOS_UI/plugin.json
 
       - name: Build MillenniumOS UI Plugin Release
@@ -56,8 +65,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/MillenniumOS_UI-${{ github.ref_name }}.zip
-          asset_name: MillenniumOS_UI-${{ github.ref_name }}.zip
+          asset_path: ./dist/MillenniumOS_UI-${{ steps.strip-version.outputs.short_version }}.zip
+          asset_name: MillenniumOS_UI-${{ steps.strip-version.outputs.short_version }}.zip
           asset_content_type: application/zip
 
       - name: Upload DWC With MOS UI Zip
