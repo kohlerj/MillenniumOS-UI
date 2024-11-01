@@ -63,7 +63,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/MillenniumOS_UI-${{ steps.strip-version.outputs.short_version }}.zip
+          asset_path: dist/MillenniumOS_UI-${{ steps.strip-version.outputs.short_version }}.zip
           asset_name: MillenniumOS_UI-${{ steps.strip-version.outputs.short_version }}.zip
           asset_content_type: application/zip
 
@@ -74,7 +74,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/DuetWebControl-SD.zip
-          asset_name: DuetWebControl-SD.zip
+          asset_path: dist/DuetWebControl-SD.zip
+          asset_name: DuetWebControl-SD-${{ env.DWC_VERSION }}-with-mosUI.zip
           asset_content_type: application/zip
 
