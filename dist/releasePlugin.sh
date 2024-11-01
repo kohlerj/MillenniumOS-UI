@@ -5,4 +5,4 @@
 npm install
 
 # Build the plugin
-npm run build-plugin MillenniumOS_UI
+npm run build-plugin MillenniumOS_UI -- --dest dist/plugin
