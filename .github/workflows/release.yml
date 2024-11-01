@@ -40,7 +40,7 @@ jobs:
           sed -i "s/\"version\": \"0.0.0\"/\"version\": \"${{ steps.strip-version.outputs.short_version }}\"/" src/plugins/MillenniumOS_UI/plugin.json
           cat src/plugins/MillenniumOS_UI/plugin.json
           
-      - name: Build Duet Web Control With MOS UI Release # needs to run first to include MOS UI as plugin
+      - name: Build Duet Web Control With MOS UI Release
         run: |
           src/plugins/MillenniumOS_UI/dist/releaseDwcWithMosUI.sh
 
@@ -56,6 +56,7 @@ jobs:
           draft: true
           generate_release_notes: true
 
+
       - name: Upload MOS UI Plugin Zip
         id: upload-mos-ui-zip
         uses: actions/upload-release-asset@v1
@@ -64,7 +65,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: dist/MillenniumOS_UI-${{ steps.strip-version.outputs.short_version }}.zip
-          asset_name: MillenniumOS_UI-${{ steps.strip-version.outputs.short_version }}.zip
+          asset_name: MillenniumOS_UI-${{ env.VERSION }}.zip
           asset_content_type: application/zip
 
       - name: Upload DWC With MOS UI Zip
@@ -78,3 +79,26 @@ jobs:
           asset_name: DuetWebControl-SD-${{ env.DWC_VERSION }}-with-mosUI.zip
           asset_content_type: application/zip
 
+      - name: Cleanup Release
+        if: failure()
+        run: |
+          echo "Deleting release due to failure in subsequent steps"
+          RELEASE_ID=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }} \
+            | jq -r .id)
+          
+          if [ "$RELEASE_ID" != "null" ]; then
+            curl -s \
+              -X DELETE \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID
+          fi
+
+          # Delete the tag
+          curl -s \
+            -X DELETE \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/git/refs/tags/${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
