@@ -3,7 +3,7 @@ on:
     tags:
       - 'v*'
 
-variables:
+env:
   DWC_VERSION: v3.5.3
 
 name: Build MillenniumOS UI for Release
