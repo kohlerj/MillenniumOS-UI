@@ -30,6 +30,7 @@ jobs:
         run: |
           echo "Applying version ${{ github.ref_name }} to MillenniumOS UI"
           sed -i "s/'"version": "0.0.0"'/'"version": ${{ github.ref_name }}'/g" src/plugins/MillenniumOS_UI/plugin.json
+          cat src/plugins/MillenniumOS_UI/plugin.json
 
       - name: Build MillenniumOS UI Release
         run: |
