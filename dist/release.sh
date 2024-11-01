@@ -4,4 +4,4 @@
 exit 0
 
 npm install
-npm run build-plugin MillenniumOS
+npm run build-plugin MillenniumOS_UI
