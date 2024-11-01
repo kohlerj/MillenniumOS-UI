@@ -4,7 +4,7 @@ on:
       - 'v*'
 
 env:
-  DWC_VERSION: v3.5.3
+  DWC_VERSION: ${{ inputs.dwc_version || 'v3.5.3' }}
 
 name: Build MillenniumOS UI for Release
 jobs:
@@ -28,20 +28,46 @@ jobs:
 
       - name: Apply plugin version
         run: |
-          echo "Applying version ${{ github.ref_name }} to MillenniumOS UI"
-          sed -i "s/'"version": "0.0.0"'/'"version": ${{ github.ref_name }}'/g" src/plugins/MillenniumOS_UI/plugin.json
+          VERSION=${{ github.ref_name#v }}
+          echo "Applying version $VERSION to MillenniumOS UI"
+          sed -i "s/\"version\": \"0.0.0\"/\"version\": \"$VERSION\"/" src/plugins/MillenniumOS_UI/plugin.json
           cat src/plugins/MillenniumOS_UI/plugin.json
 
-      - name: Build MillenniumOS UI Release
+      - name: Build MillenniumOS UI Plugin Release
         run: |
-          src/plugins/MillenniumOS_UI/dist/release.sh
+          src/plugins/MillenniumOS_UI/dist/releasePlugin.sh
 
-      - name: Release
+      - name: Build Duet Web Control With MOS UI Release
+        run: |
+          src/plugins/MillenniumOS_UI/dist/releaseDwcWithMosUI.sh
+
+      - name: Create Release
+        id: create_release
         uses: softprops/action-gh-release@v2
         with:
           name: MillenniumOS UI ${{ github.ref_name }}
           draft: true
           generate_release_notes: true
-          fail_on_unmatched_files: true
-          files: |
-            dist/*.zip
+
+      - name: Upload MOS UI Plugin Zip
+        id: upload-mos-ui-zip
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/MillenniumOS_UI-${{ github.ref_name }}.zip
+          asset_name: MillenniumOS_UI-${{ github.ref_name }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload DWC With MOS UI Zip
+        id: upload-dwc-with-mos-ui-zip
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/DuetWebControl-SD.zip
+          asset_name: DuetWebControl-SD.zip
+          asset_content_type: application/zip
+

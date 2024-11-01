@@ -3,4 +3,6 @@
 [[ ! -f "package.json" ]] && echo "Please run this script from the root of Duet Web Control!" && exit 1
 
 npm install
-npm run build-plugin MillenniumOS_UI
+
+# Build DWC with the plugin
+npm run build
