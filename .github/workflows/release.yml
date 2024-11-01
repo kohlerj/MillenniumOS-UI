@@ -24,16 +24,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          path: src/plugins/MillenniumOS
+          path: src/plugins/MillenniumOS_UI
 
       - name: Apply plugin version
         run: |
           echo "Applying version ${{ github.ref_name }} to MillenniumOS UI"
-          sed -i "s/'"version": "0.0.0"'/'"version": ${{ github.ref_name }}'/g" src/plugins/MillenniumOS/plugin.json
+          sed -i "s/'"version": "0.0.0"'/'"version": ${{ github.ref_name }}'/g" src/plugins/MillenniumOS_UI/plugin.json
 
       - name: Build MillenniumOS UI Release
         run: |
-          src/plugins/MillenniumOS/dist/release.sh
+          src/plugins/MillenniumOS_UI/dist/release.sh
 
       - name: Release
         uses: softprops/action-gh-release@v2
