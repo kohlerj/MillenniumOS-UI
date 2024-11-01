@@ -86,7 +86,7 @@
 						<template #activator="{ on }">
 							<v-btn v-show="visibleAxes.length" :color="isProtectedMovesEnabled ? 'primary' : 'warning'" block class="mx-0 move-btn"
 								   :disabled="uiFrozen" v-on="on">
-								{{ (isProtectedMovesEnabled) ? $t("plugins.millenniumos.panels.cncMovement.protectionState.enabled", [protectedMoveProbeID]) : $t("plugins.millenniumos.panels.cncMovement.protectionState.disabled") }}
+								{{ (isProtectedMovesEnabled) ? $t("plugins.millenniumos_ui.panels.cncMovement.protectionState.enabled", [protectedMoveProbeID]) : $t("plugins.millenniumos_ui.panels.cncMovement.protectionState.disabled") }}
 								<v-icon>mdi-menu-down</v-icon>
 							</v-btn>
 						</template>
@@ -95,7 +95,7 @@
 							<v-list>
 								<v-list-item v-if="protectedMoveProbes.length == 1">
 									<v-icon class="mr-1">mdi-alert-octagon-outline</v-icon>
-									{{ $t("plugins.millenniumos.panels.cncMovement.protectionProbeNone") }}
+									{{ $t("plugins.millenniumos_ui.panels.cncMovement.protectionProbeNone") }}
 								</v-list-item>
 								<template v-if="protectedMoveProbes.length > 1">
 									<v-list-item
@@ -221,7 +221,7 @@ type ProtectedMoveProbe = {
 
 export default Vue.extend({
 	computed: {
-        pluginCache(): MachineCache { return store.state.machine.cache.plugins.MillenniumOS as MachineCache; },
+        pluginCache(): MachineCache { return store.state.machine.cache.plugins.MillenniumOS_UI as MachineCache; },
 		uiFrozen(): boolean { return store.getters["uiFrozen"]; },
 		moveSteps(): (axisLetter: AxisLetter) => Array<number> { return ((axisLetter: AxisLetter) => store.getters["machine/settings/moveSteps"](axisLetter)); },
 		numMoveSteps(): number { return store.getters["machine/settings/numMoveSteps"]; },
@@ -241,7 +241,7 @@ export default Vue.extend({
 			},
 			set(value: number) {
               this.currentProtectedMoveProbeID = value;
-              setPluginData('MillenniumOS', PluginDataType.machineCache, 'protectedMoveProbeID', value);
+              setPluginData('MillenniumOS_UI', PluginDataType.machineCache, 'protectedMoveProbeID', value);
 			}
 		},
 		isProtectedMovesEnabled(): boolean { return this.protectedMoveProbeID >= 0; },
@@ -254,13 +254,13 @@ export default Vue.extend({
 					if (probe !== null && [ProbeType.digital, ProbeType.unfilteredDigital, ProbeType.blTouch].includes(probe.type)) {
 						probes.push({
 							id: index,
-							description: this.$t('plugins.millenniumos.panels.cncMovement.protectionProbeDescription', [index, ProbeType[probe.type], probe.travelSpeed, "mm/min"]).toString()
+							description: this.$t('plugins.millenniumos_ui.panels.cncMovement.protectionProbeDescription', [index, ProbeType[probe.type], probe.travelSpeed, "mm/min"]).toString()
 						});
 					}
 				});
 				probes.push({
 					id: -1,
-					description: this.$t('plugins.millenniumos.panels.cncMovement.protectionProbeDisable', [store.state.machine.settings.moveFeedrate, "mm/min"]).toString()
+					description: this.$t('plugins.millenniumos_ui.panels.cncMovement.protectionProbeDisable', [store.state.machine.settings.moveFeedrate, "mm/min"]).toString()
 				});
 				return probes;
 			}

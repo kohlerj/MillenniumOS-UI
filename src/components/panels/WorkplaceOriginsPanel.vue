@@ -10,7 +10,7 @@
 </style>
 <template>
     <v-card>
-        <v-card-title>{{ $t("plugins.millenniumos.panels.workplaceOrigins.cardTitle") }}</v-card-title>
+        <v-card-title>{{ $t("plugins.millenniumos_ui.panels.workplaceOrigins.cardTitle") }}</v-card-title>
         <v-container fluid>
             <v-row>
                 <v-col>
@@ -73,7 +73,7 @@
                                                     <v-icon small @click="clearWorkplace(item)">mdi-cancel</v-icon>
                                                 </v-btn>
                                             </template>
-                                            <span>{{ $t("plugins.millenniumos.panels.workplaceOrigins.resetAction", [item.workplace]) }}</span>
+                                            <span>{{ $t("plugins.millenniumos_ui.panels.workplaceOrigins.resetAction", [item.workplace]) }}</span>
                                         </v-tooltip>
                                     </v-col>
                                 </v-row>
@@ -132,7 +132,7 @@
                     value: 'workplace',
                     align: 'start',
                 },{
-                    text: this.$t('plugins.millenniumos.panels.workplaceOrigins.activeHeader'),
+                    text: this.$t('plugins.millenniumos_ui.panels.workplaceOrigins.activeHeader'),
                     value: 'active',
                     align: 'center',
                 }, ...store.state.machine.model.move.axes.map(axis => ({

@@ -63,7 +63,7 @@
                                                     </v-icon>
                                                 </v-chip>
                                             </template>
-                                            {{ setting.value ? $t("plugins.millenniumos.probeSettings.booleanEnabled") : $t("plugins.millenniumos.probeSettings.booleanDisabled") }}
+                                            {{ setting.value ? $t("plugins.millenniumos_ui.probeSettings.booleanEnabled") : $t("plugins.millenniumos_ui.probeSettings.booleanDisabled") }}
                                         </v-tooltip>
                                     </v-col>
                                 </v-row>

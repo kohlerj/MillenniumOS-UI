@@ -28,7 +28,7 @@
 	<v-card class="py-0">
 		<v-card-title class="py-2">
 			<strong>
-				{{ $t("plugins.millenniumos.panels.axesPosition.positionHeader") }}
+				{{ $t("plugins.millenniumos_ui.panels.axesPosition.positionHeader") }}
 			</strong>
 		</v-card-title>
 		<v-card-text class="pt-10">
@@ -131,7 +131,7 @@ export default defineComponent({
 					translationString = "atStop";
 					break
 			}
-			return this.$t(`plugins.millenniumos.panels.axesPosition.${translationString}`, [axisLetter]).toString();
+			return this.$t(`plugins.millenniumos_ui.panels.axesPosition.${translationString}`, [axisLetter]).toString();
 		}
 	}
 });

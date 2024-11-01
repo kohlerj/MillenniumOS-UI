@@ -4,7 +4,7 @@
 		<v-card-title>
 			<span>
 				<v-icon small class="mr-1">mdi-file-code</v-icon>
-        		{{ $t("plugins.millenniumos.panels.jobCode.cardTitle") }}
+        		{{ $t("plugins.millenniumos_ui.panels.jobCode.cardTitle") }}
 			</span>
 		</v-card-title>
 

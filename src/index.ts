@@ -10,11 +10,11 @@ import './components/panels';
 import './components/inputs';
 import './components/overrides';
 
-import Dash from './MillenniumOS.vue'
+import Dash from './MillenniumO_UI.vue'
 
 import en from "./i18n/en.json";
 
-registerPluginLocalization("millenniumos", "en", en);
+registerPluginLocalization("millenniumos_ui", "en", en);
 
 // Register a route via Settings -> Object Model
 registerRoute(Dash, {
@@ -22,9 +22,9 @@ registerRoute(Dash, {
 		MillenniumOS: {
 			icon: "mdi-toolbox",
 			caption: "plugins.millenniumos.menuCaption",
-			path: "/Plugins/MillenniumOS"
+			path: "/Plugins/MillenniumOS_UI"
 		}
 	}
 });
 
-registerPluginData('MillenniumOS', PluginDataType.machineCache, 'protectedMoveProbeID', -1);
+registerPluginData('MillenniumOS_UI', PluginDataType.machineCache, 'protectedMoveProbeID', -1);

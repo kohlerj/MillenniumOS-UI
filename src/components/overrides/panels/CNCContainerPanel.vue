@@ -14,7 +14,7 @@
 								<template v-slot:default>
 									<tbody>
 										<tr>
-											<td><strong>{{ $t("plugins.millenniumos.panels.workplaceOrigins.workplaceHeader") }}</strong></td>
+											<td><strong>{{ $t("plugins.millenniumos_ui.panels.workplaceOrigins.workplaceHeader") }}</strong></td>
 											<td align="right">
 												<v-tooltip top>
 													<template v-slot:activator="{ on, attrs }">
@@ -28,7 +28,7 @@
 											</td>
 										</tr>
 										<tr v-if="toolNumber !== null && toolName !== null">
-											<td><strong>{{ $t("plugins.millenniumos.panels.cncStatus.toolName") }}</strong></td>
+											<td><strong>{{ $t("plugins.millenniumos_ui.panels.cncStatus.toolName") }}</strong></td>
 											<td align="right">
 												<v-tooltip top>
 													<template v-slot:activator="{ on, attrs }">
@@ -42,7 +42,7 @@
 											</td>
 										</tr>
 										<tr v-if="toolRadius !== null">
-											<td><strong>{{ $t("plugins.millenniumos.panels.cncStatus.toolRadius") }}</strong></td>
+											<td><strong>{{ $t("plugins.millenniumos_ui.panels.cncStatus.toolRadius") }}</strong></td>
 											<td align="right">
 												<v-chip label outlined>
 													{{ $display(toolRadius, 3, "mm") }}
@@ -51,7 +51,7 @@
 											</td>
 										</tr>
 										<tr v-if="toolOffset !== null">
-											<td><strong>{{ $t("plugins.millenniumos.panels.cncStatus.toolOffset") }}</strong></td>
+											<td><strong>{{ $t("plugins.millenniumos_ui.panels.cncStatus.toolOffset") }}</strong></td>
 											<td align="right">
 												<v-chip label outlined>
 													{{ $display(toolOffset, 3, "mm") }}
@@ -60,10 +60,10 @@
 											</td>
 										</tr>
 										<tr v-if="touchProbe !== null">
-											<td><strong>{{ $t("plugins.millenniumos.panels.cncStatus.touchProbe") }}</strong></td>
+											<td><strong>{{ $t("plugins.millenniumos_ui.panels.cncStatus.touchProbe") }}</strong></td>
 											<td align="right">
 												<v-chip label outlined >
-													{{ (!touchProbeEnabled)? $t('plugins.millenniumos.panels.cncStatus.probeDisabled') : probeText(touchProbe) }}
+													{{ (!touchProbeEnabled)? $t('plugins.millenniumos_ui.panels.cncStatus.probeDisabled') : probeText(touchProbe) }}
 													<v-avatar right rounded :color="(!touchProbeEnabled)? 'grey' : probeColor(touchProbe)">
 														<v-icon small>{{ probeIcon(touchProbe) }}</v-icon>
 													</v-avatar>
@@ -71,10 +71,10 @@
 											</td>
 										</tr>
 										<tr v-if="toolsetter !== null">
-											<td><strong>{{ $t("plugins.millenniumos.panels.cncStatus.toolsetter") }}</strong></td>
+											<td><strong>{{ $t("plugins.millenniumos_ui.panels.cncStatus.toolsetter") }}</strong></td>
 											<td align="right">
 												<v-chip label outlined >
-													{{ (!toolsetterEnabled)? $t('plugins.millenniumos.panels.cncStatus.probeDisabled') : probeText(toolsetter) }}
+													{{ (!toolsetterEnabled)? $t('plugins.millenniumos_ui.panels.cncStatus.probeDisabled') : probeText(toolsetter) }}
 													<v-avatar right rounded :color="(!toolsetterEnabled)? 'grey' : probeColor(toolsetter)">
 														<v-icon small>{{ probeIcon(toolsetter) }}</v-icon>
 													</v-avatar>
@@ -82,7 +82,7 @@
 											</td>
 										</tr>
 										<tr v-if="rotationCompensation !== 0">
-											<td><strong>{{ $t("plugins.millenniumos.panels.cncStatus.rotationCompensation") }}</strong></td>
+											<td><strong>{{ $t("plugins.millenniumos_ui.panels.cncStatus.rotationCompensation") }}</strong></td>
 											<td align="right">
 												<v-chip label outlined>
 													{{ $display(rotationCompensation, 3, "°") }}
@@ -281,13 +281,13 @@ export default defineComponent({
 					translationString = "workplacePartial";
 					break
 			}
-			return this.$t(`plugins.millenniumos.panels.cncStatus.${translationString}`, [workplaceAsGCode(this.currentWorkplace)]).toString();
+			return this.$t(`plugins.millenniumos_ui.panels.cncStatus.${translationString}`, [workplaceAsGCode(this.currentWorkplace)]).toString();
 		},
 		probeColor(probe: Probe) {
 			return (probe.value[0] >= probe.threshold) ? 'red' : 'green';
 		},
 		probeText(probe: Probe) {
-			return this.$t((probe.value[0] >= probe.threshold) ? 'plugins.millenniumos.panels.cncStatus.probeTriggered' : 'plugins.millenniumos.panels.cncStatus.probeNotTriggered', [probe.value[0]]);
+			return this.$t((probe.value[0] >= probe.threshold) ? 'plugins.millenniumos_ui.panels.cncStatus.probeTriggered' : 'plugins.millenniumos_ui.panels.cncStatus.probeNotTriggered', [probe.value[0]]);
 		},
 		probeIcon(probe: Probe) {
 			return (probe.value[0] >= probe.threshold) ? 'mdi-bell-ring' : 'mdi-bell-sleep';
