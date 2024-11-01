@@ -29,8 +29,6 @@ jobs:
 
       - name: Strip v from version
         id: strip-version
-        outputs:
-         short_version: ${{ steps.strip-version.outputs.SHORT_VERSION }}
         run: |
           VERSION=${{ github.ref_name }}
           echo "Stripping v from version $VERSION"
