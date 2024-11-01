@@ -10,7 +10,7 @@ import './components/panels';
 import './components/inputs';
 import './components/overrides';
 
-import Dash from './MillenniumO_UI.vue'
+import Dash from './MillenniumOS_UI.vue'
 
 import en from "./i18n/en.json";
 
@@ -21,7 +21,7 @@ registerRoute(Dash, {
 	Control: {
 		MillenniumOS: {
 			icon: "mdi-toolbox",
-			caption: "plugins.millenniumos.menuCaption",
+			caption: "MillenniumOS",
 			path: "/Plugins/MillenniumOS_UI"
 		}
 	}
