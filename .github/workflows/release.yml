@@ -28,9 +28,9 @@ jobs:
 
       - name: Apply plugin version
         run: |
-          VERSION=${{ github.ref_name#v }}
+          VERSION=${{ github.ref_name }}
           echo "Applying version $VERSION to MillenniumOS UI"
-          sed -i "s/\"version\": \"0.0.0\"/\"version\": \"$VERSION\"/" src/plugins/MillenniumOS_UI/plugin.json
+          sed -i "s/\"version\": \"0.0.0\"/\"version\": \"${VERSION#v}\"/" src/plugins/MillenniumOS_UI/plugin.json
           cat src/plugins/MillenniumOS_UI/plugin.json
 
       - name: Build MillenniumOS UI Plugin Release
