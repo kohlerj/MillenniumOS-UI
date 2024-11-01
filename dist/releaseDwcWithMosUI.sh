@@ -5,4 +5,4 @@
 npm install
 
 # Build DWC with the plugin
-npm run build -- --dest dist/dwcWithMosUI
+npm run build -- --dest distDWC

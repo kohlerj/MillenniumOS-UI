@@ -39,15 +39,15 @@ jobs:
           echo "Applying version $VERSION to MillenniumOS UI"
           sed -i "s/\"version\": \"0.0.0\"/\"version\": \"${{ steps.strip-version.outputs.short_version }}\"/" src/plugins/MillenniumOS_UI/plugin.json
           cat src/plugins/MillenniumOS_UI/plugin.json
+          
+      - name: Build Duet Web Control With MOS UI Release # needs to run first to include MOS UI as plugin
+        run: |
+          src/plugins/MillenniumOS_UI/dist/releaseDwcWithMosUI.sh
 
       - name: Build MillenniumOS UI Plugin Release
         run: |
           src/plugins/MillenniumOS_UI/dist/releasePlugin.sh
-
-      - name: Build Duet Web Control With MOS UI Release
-        run: |
-          src/plugins/MillenniumOS_UI/dist/releaseDwcWithMosUI.sh
-
+          
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v2
@@ -63,7 +63,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/plugin/MillenniumOS_UI-${{ steps.strip-version.outputs.short_version }}.zip
+          asset_path: dist/MillenniumOS_UI-${{ steps.strip-version.outputs.short_version }}.zip
           asset_name: MillenniumOS_UI-${{ steps.strip-version.outputs.short_version }}.zip
           asset_content_type: application/zip
 
@@ -74,7 +74,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/dwcWithMosUI/DuetWebControl-SD.zip
+          asset_path: distDWC/DuetWebControl-SD.zip
           asset_name: DuetWebControl-SD-${{ env.DWC_VERSION }}-with-mosUI.zip
           asset_content_type: application/zip
 
